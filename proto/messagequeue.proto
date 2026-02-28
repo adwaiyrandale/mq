@@ -1,0 +1,255 @@
+syntax = "proto3";
+
+package mq;
+
+option go_package = "github.com/adwaiy/mq/pkg/protocol";
+
+service MessageQueue {
+  rpc Produce(ProduceRequest) returns (ProduceResponse);
+  rpc ProduceStream(stream ProduceRequest) returns (ProduceResponse);
+  
+  rpc Consume(ConsumeRequest) returns (ConsumeResponse);
+  rpc Subscribe(SubscribeRequest) returns (stream Message);
+  rpc CommitOffset(CommitOffsetRequest) returns (CommitOffsetResponse);
+  rpc Seek(SeekRequest) returns (SeekResponse);
+  
+  rpc CreateTopic(CreateTopicRequest) returns (CreateTopicResponse);
+  rpc DeleteTopic(DeleteTopicRequest) returns (DeleteTopicResponse);
+  rpc ListTopics(ListTopicsRequest) returns (ListTopicsResponse);
+  rpc DescribeTopic(DescribeTopicRequest) returns (DescribeTopicResponse);
+  
+  rpc DescribeCluster(DescribeClusterRequest) returns (DescribeClusterResponse);
+  
+  rpc JoinGroup(JoinGroupRequest) returns (JoinGroupResponse);
+  rpc SyncGroup(SyncGroupRequest) returns (SyncGroupResponse);
+  rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+  rpc LeaveGroup(LeaveGroupRequest) returns (LeaveGroupResponse);
+  
+  // Raft RPCs
+  rpc RequestVote(RequestVoteRequest) returns (RequestVoteResponse);
+  rpc AppendEntries(AppendEntriesRequest) returns (AppendEntriesResponse);
+  
+  // Replication RPC
+  rpc Fetch(FetchRequest) returns (FetchResponse);
+}
+
+message Message {
+  bytes key = 1;
+  bytes value = 2;
+  map<string, string> headers = 3;
+  int64 timestamp = 4;
+  int64 offset = 5;
+  int32 partition = 6;
+  string topic = 7;
+}
+
+message ProduceRequest {
+  string topic = 1;
+  bytes key = 2;
+  bytes value = 3;
+  map<string, string> headers = 4;
+  int32 acks = 5;
+  int32 partition = 6;
+}
+
+message ProduceResponse {
+  int64 offset = 1;
+  int32 partition = 2;
+  int64 timestamp = 3;
+}
+
+message ConsumeRequest {
+  string topic = 1;
+  int32 partition = 2;
+  int64 offset = 3;
+  int32 max_bytes = 4;
+}
+
+message ConsumeResponse {
+  repeated Message messages = 1;
+  int64 high_watermark = 2;
+}
+
+message SubscribeRequest {
+  string group_id = 1;
+  string topic = 2;
+  int32 partition = 3;
+  int64 start_offset = 4;
+}
+
+message CommitOffsetRequest {
+  string group_id = 1;
+  string topic = 2;
+  int32 partition = 3;
+  int64 offset = 4;
+}
+
+message CommitOffsetResponse {
+  bool success = 1;
+}
+
+message SeekRequest {
+  string topic = 1;
+  int32 partition = 2;
+  int64 offset = 3;
+}
+
+message SeekResponse {
+  int64 offset = 1;
+}
+
+message CreateTopicRequest {
+  string topic = 1;
+  int32 partitions = 2;
+  int32 replication_factor = 3;
+}
+
+message CreateTopicResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+message DeleteTopicRequest {
+  string topic = 1;
+}
+
+message DeleteTopicResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+message ListTopicsRequest {}
+
+message ListTopicsResponse {
+  repeated string topics = 1;
+}
+
+message DescribeTopicRequest {
+  string topic = 1;
+}
+
+message DescribeTopicResponse {
+  string topic = 1;
+  int32 partitions = 2;
+  repeated PartitionInfo partition_info = 3;
+}
+
+message PartitionInfo {
+  int32 partition_id = 1;
+  int64 high_water_mark = 2;
+  int64 log_end_offset = 3;
+  int32 leader = 4;
+  repeated int32 replicas = 5;
+  repeated int32 isr = 6;
+}
+
+message DescribeClusterRequest {}
+
+message DescribeClusterResponse {
+  int32 broker_id = 1;
+  string cluster_id = 2;
+  repeated BrokerInfo brokers = 3;
+}
+
+message BrokerInfo {
+  int32 id = 1;
+  string host = 2;
+  int32 port = 3;
+}
+
+message JoinGroupRequest {
+  string group_id = 1;
+  string member_id = 2;
+  repeated string topics = 3;
+}
+
+message JoinGroupResponse {
+  string member_id = 1;
+  int32 generation_id = 2;
+  string leader_id = 3;
+  repeated string members = 4;
+}
+
+message SyncGroupRequest {
+  string group_id = 1;
+  string member_id = 2;
+  int32 generation_id = 3;
+  map<string, PartitionAssignments> assignment = 4;
+}
+
+message PartitionAssignments {
+  repeated int32 partitions = 1;
+}
+
+message SyncGroupResponse {
+  bool success = 1;
+  map<string, PartitionAssignments> assignment = 2;
+}
+
+message HeartbeatRequest {
+  string group_id = 1;
+  string member_id = 2;
+  int32 generation_id = 3;
+}
+
+message HeartbeatResponse {
+  bool success = 1;
+}
+
+message LeaveGroupRequest {
+  string group_id = 1;
+  string member_id = 2;
+}
+
+message LeaveGroupResponse {
+  bool success = 1;
+}
+
+message RequestVoteRequest {
+  int64 term = 1;
+  string candidate_id = 2;
+  int64 last_log_index = 3;
+  int64 last_log_term = 4;
+}
+
+message RequestVoteResponse {
+  int64 term = 1;
+  bool vote_granted = 2;
+}
+
+message AppendEntriesRequest {
+  int64 term = 1;
+  string leader_id = 2;
+  int64 prev_log_index = 3;
+  int64 prev_log_term = 4;
+  repeated LogEntry entries = 5;
+  int64 leader_commit = 6;
+}
+
+message LogEntry {
+  int64 term = 1;
+  int64 index = 2;
+  bytes data = 3;
+}
+
+message AppendEntriesResponse {
+  int64 term = 1;
+  bool success = 2;
+}
+
+message FetchRequest {
+  string topic = 1;
+  int32 partition = 2;
+  int64 fetch_offset = 3;
+  int32 max_bytes = 4;
+  string replica_id = 5;
+}
+
+message FetchResponse {
+  string topic = 1;
+  int32 partition = 2;
+  int64 high_watermark = 3;
+  int64 log_end_offset = 4;
+  repeated Message messages = 5;
+  int32 error_code = 6;
+}

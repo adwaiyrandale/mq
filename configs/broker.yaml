@@ -1,0 +1,36 @@
+# Broker Configuration
+
+broker:
+  id: 1
+  host: "0.0.0.0"
+  port: 9001
+  data_dir: "./data"
+
+storage:
+  segment_size: 1073741824  # 1GB
+  index_interval: 4096      # bytes between index entries
+  retention_ms: 604800000   # 7 days
+  retention_bytes: -1       # unlimited
+
+cluster:
+  seed_nodes:
+    - "localhost:9001"
+    - "localhost:9002"
+    - "localhost:9003"
+  election_timeout_ms: 1000
+  heartbeat_interval_ms: 200
+
+replication:
+  default_replication_factor: 3
+  min_insync_replicas: 2
+  replica_fetch_max_bytes: 1048576
+
+consumer:
+  session_timeout_ms: 10000
+  heartbeat_interval_ms: 3000
+  max_poll_interval_ms: 300000
+  auto_commit_interval_ms: 5000
+
+log:
+  level: "info"
+  format: "json"

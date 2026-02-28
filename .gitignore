@@ -1,0 +1,29 @@
+# Data
+/data/
+*.log
+*.db
+
+# Binaries
+/bin/
+*.exe
+*.dll
+*.so
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test outputs
+*.test
+*.out
+
+# Temporary
+tmp/
+temp/
