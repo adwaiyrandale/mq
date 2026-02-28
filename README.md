@@ -247,3 +247,6 @@ MIT
 ## Acknowledgments
 
 Built for educational purposes to understand distributed systems concepts.
+# Contact
+
+Want to discuss this project? Reach out!
