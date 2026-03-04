@@ -1,0 +1,908 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "proto/messagequeue.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "MessageQueue"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/cluster": {
+      "get": {
+        "summary": "Describe the cluster",
+        "operationId": "MessageQueue_DescribeCluster",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mqDescribeClusterResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "MessageQueue"
+        ]
+      }
+    },
+    "/v1/groups/{groupId}/heartbeat": {
+      "post": {
+        "summary": "Send heartbeat to consumer group",
+        "operationId": "MessageQueue_Heartbeat",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mqHeartbeatResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MessageQueueHeartbeatBody"
+            }
+          }
+        ],
+        "tags": [
+          "MessageQueue"
+        ]
+      }
+    },
+    "/v1/groups/{groupId}/join": {
+      "post": {
+        "summary": "Join a consumer group",
+        "operationId": "MessageQueue_JoinGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mqJoinGroupResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MessageQueueJoinGroupBody"
+            }
+          }
+        ],
+        "tags": [
+          "MessageQueue"
+        ]
+      }
+    },
+    "/v1/groups/{groupId}/leave": {
+      "post": {
+        "summary": "Leave a consumer group",
+        "operationId": "MessageQueue_LeaveGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mqLeaveGroupResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MessageQueueLeaveGroupBody"
+            }
+          }
+        ],
+        "tags": [
+          "MessageQueue"
+        ]
+      }
+    },
+    "/v1/groups/{groupId}/offsets": {
+      "post": {
+        "summary": "Commit a consumer group offset",
+        "operationId": "MessageQueue_CommitOffset",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mqCommitOffsetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MessageQueueCommitOffsetBody"
+            }
+          }
+        ],
+        "tags": [
+          "MessageQueue"
+        ]
+      }
+    },
+    "/v1/groups/{groupId}/sync": {
+      "post": {
+        "summary": "Sync consumer group assignments",
+        "operationId": "MessageQueue_SyncGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mqSyncGroupResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MessageQueueSyncGroupBody"
+            }
+          }
+        ],
+        "tags": [
+          "MessageQueue"
+        ]
+      }
+    },
+    "/v1/topics": {
+      "get": {
+        "summary": "List all topics",
+        "operationId": "MessageQueue_ListTopics",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mqListTopicsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "MessageQueue"
+        ]
+      },
+      "post": {
+        "summary": "Create a new topic",
+        "operationId": "MessageQueue_CreateTopic",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mqCreateTopicResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/mqCreateTopicRequest"
+            }
+          }
+        ],
+        "tags": [
+          "MessageQueue"
+        ]
+      }
+    },
+    "/v1/topics/{topic}": {
+      "get": {
+        "summary": "Describe a topic",
+        "operationId": "MessageQueue_DescribeTopic",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mqDescribeTopicResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "topic",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "MessageQueue"
+        ]
+      },
+      "delete": {
+        "summary": "Delete a topic",
+        "operationId": "MessageQueue_DeleteTopic",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mqDeleteTopicResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "topic",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "MessageQueue"
+        ]
+      }
+    },
+    "/v1/topics/{topic}/messages": {
+      "post": {
+        "summary": "Produce a message to a topic",
+        "operationId": "MessageQueue_Produce",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mqProduceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "topic",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MessageQueueProduceBody"
+            }
+          }
+        ],
+        "tags": [
+          "MessageQueue"
+        ]
+      }
+    },
+    "/v1/topics/{topic}/partitions/{partition}/messages": {
+      "get": {
+        "summary": "Consume messages from a topic partition",
+        "operationId": "MessageQueue_Consume",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mqConsumeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "topic",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "partition",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "maxBytes",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "MessageQueue"
+        ]
+      }
+    },
+    "/v1/topics/{topic}/partitions/{partition}/seek": {
+      "post": {
+        "summary": "Seek to a specific offset",
+        "operationId": "MessageQueue_Seek",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mqSeekResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "topic",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "partition",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/MessageQueueSeekBody"
+            }
+          }
+        ],
+        "tags": [
+          "MessageQueue"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "MessageQueueCommitOffsetBody": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string"
+        },
+        "partition": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "offset": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "MessageQueueHeartbeatBody": {
+      "type": "object",
+      "properties": {
+        "memberId": {
+          "type": "string"
+        },
+        "generationId": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "MessageQueueJoinGroupBody": {
+      "type": "object",
+      "properties": {
+        "memberId": {
+          "type": "string"
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "MessageQueueLeaveGroupBody": {
+      "type": "object",
+      "properties": {
+        "memberId": {
+          "type": "string"
+        }
+      }
+    },
+    "MessageQueueProduceBody": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "format": "byte"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "acks": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "partition": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "MessageQueueSeekBody": {
+      "type": "object",
+      "properties": {
+        "offset": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "MessageQueueSyncGroupBody": {
+      "type": "object",
+      "properties": {
+        "memberId": {
+          "type": "string"
+        },
+        "generationId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "assignment": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/mqPartitionAssignments"
+          }
+        }
+      }
+    },
+    "mqBrokerInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "mqCommitOffsetResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "mqConsumeResponse": {
+      "type": "object",
+      "properties": {
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/mqMessage"
+          }
+        },
+        "highWatermark": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "mqCreateTopicRequest": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string"
+        },
+        "partitions": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "replicationFactor": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "mqCreateTopicResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "mqDeleteTopicResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "mqDescribeClusterResponse": {
+      "type": "object",
+      "properties": {
+        "brokerId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "clusterId": {
+          "type": "string"
+        },
+        "brokers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/mqBrokerInfo"
+          }
+        }
+      }
+    },
+    "mqDescribeTopicResponse": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string"
+        },
+        "partitions": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "partitionInfo": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/mqPartitionInfo"
+          }
+        }
+      }
+    },
+    "mqHeartbeatResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "mqJoinGroupResponse": {
+      "type": "object",
+      "properties": {
+        "memberId": {
+          "type": "string"
+        },
+        "generationId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "leaderId": {
+          "type": "string"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "mqLeaveGroupResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "mqListTopicsResponse": {
+      "type": "object",
+      "properties": {
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "mqMessage": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "format": "byte"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "int64"
+        },
+        "offset": {
+          "type": "string",
+          "format": "int64"
+        },
+        "partition": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "topic": {
+          "type": "string"
+        }
+      }
+    },
+    "mqPartitionAssignments": {
+      "type": "object",
+      "properties": {
+        "partitions": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    },
+    "mqPartitionInfo": {
+      "type": "object",
+      "properties": {
+        "partitionId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "highWaterMark": {
+          "type": "string",
+          "format": "int64"
+        },
+        "logEndOffset": {
+          "type": "string",
+          "format": "int64"
+        },
+        "leader": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "replicas": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "isr": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    },
+    "mqProduceResponse": {
+      "type": "object",
+      "properties": {
+        "offset": {
+          "type": "string",
+          "format": "int64"
+        },
+        "partition": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "mqSeekResponse": {
+      "type": "object",
+      "properties": {
+        "offset": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "mqSyncGroupResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "assignment": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/mqPartitionAssignments"
+          }
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

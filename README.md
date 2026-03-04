@@ -13,6 +13,7 @@ A Kafka-like distributed message queue built in Go for educational purposes. Imp
 - **Consumer Groups**: Automatic partition rebalancing and offset management
 - **Replication**: ISR (In-Sync Replicas) with configurable acks (0, 1, all)
 - **gRPC API**: High-performance RPC with Protocol Buffers
+- **REST API**: HTTP/JSON gateway with Swagger UI
 - **Benchmarked**: 46k msg/s throughput, 1ms p99 latency
 
 ## Architecture
@@ -55,6 +56,62 @@ go run ./cmd/broker -id=broker-1 -port=9001 -data=./data
 # Or build binary first
 go build -o bin/broker ./cmd/broker
 ./bin/broker -id=broker-1 -port=9001 -data=./data
+```
+
+### Run REST API Gateway with Swagger UI
+
+Terminal 1 (Start broker):
+```bash
+go run ./cmd/broker -id=broker-1 -port=9001 -data=./data
+```
+
+Terminal 2 (Start gateway):
+```bash
+go run ./cmd/gateway
+# Or with custom ports:
+BROKER_ADDR=localhost:9001 GATEWAY_ADDR=:8080 go run ./cmd/gateway
+```
+
+The gateway provides:
+- **Swagger UI**: http://localhost:8080/swagger/ - Interactive API documentation
+- **REST API**: http://localhost:8080/v1/ - HTTP/JSON endpoints
+- **Health Check**: http://localhost:8080/health
+
+**REST API Endpoints:**
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/v1/topics` | Create a topic |
+| GET | `/v1/topics` | List all topics |
+| GET | `/v1/topics/{topic}` | Describe a topic |
+| DELETE | `/v1/topics/{topic}` | Delete a topic |
+| POST | `/v1/topics/{topic}/messages` | Produce a message |
+| GET | `/v1/topics/{topic}/partitions/{partition}/messages` | Consume messages |
+| POST | `/v1/groups/{groupId}/join` | Join consumer group |
+| POST | `/v1/groups/{groupId}/sync` | Sync group assignments |
+| POST | `/v1/groups/{groupId}/heartbeat` | Consumer heartbeat |
+| POST | `/v1/groups/{groupId}/leave` | Leave consumer group |
+| POST | `/v1/groups/{groupId}/offsets` | Commit offset |
+| GET | `/v1/cluster` | Cluster info |
+
+**Example REST API Usage:**
+
+```bash
+# Create a topic
+curl -X POST http://localhost:8080/v1/topics \
+  -H "Content-Type: application/json" \
+  -d '{"topic":"my-topic","partitions":3}'
+
+# Produce a message (base64 encoded key/value)
+curl -X POST http://localhost:8080/v1/topics/my-topic/messages \
+  -H "Content-Type: application/json" \
+  -d '{"key":"a2V5","value":"aGVsbG8=","acks":1}'
+
+# Consume messages
+curl "http://localhost:8080/v1/topics/my-topic/partitions/0/messages?offset=0"
+
+# List topics
+curl http://localhost:8080/v1/topics
 ```
 
 ### Run 3-Node Cluster
@@ -120,12 +177,44 @@ consumer.Subscribe(func(msg *mqpb.Message) {
 select {} // Run forever
 ```
 
-## Project Structure
+### REST API Client
+
+```bash
+# Using curl
+curl -X POST http://localhost:8080/v1/topics/my-topic/messages \
+  -H "Content-Type: application/json" \
+  -d '{"key":"a2V5","value":"aGVsbG8=","acks":1}'
+```
+
+## Development
+
+### Regenerating Gateway Code
+
+After modifying `proto/messagequeue.proto`, regenerate the gateway code:
+
+```bash
+# Install required tools
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
+go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
+
+# Generate all code (protos, gateway, swagger)
+make generate
+
+# Or individually:
+make proto      # Generate protobuf Go code
+make gateway    # Generate gRPC gateway
+make swagger    # Generate OpenAPI spec
+```
+
+### Project Structure
 
 ```
 mq/
 ├── cmd/                    # Commands
 │   ├── broker/            # Broker binary
+│   ├── gateway/           # REST API gateway with Swagger UI
 │   ├── cli/               # CLI tool
 │   ├── benchmark/         # Benchmark suite
 │   ├── test_raft/         # Raft tests
@@ -141,6 +230,15 @@ mq/
 │   ├── producer.go
 │   └── consumer.go
 ├── proto/                 # Protocol Buffers
+│   ├── messagequeue.proto
+│   ├── messagequeue.pb.go
+│   ├── messagequeue_grpc.pb.go
+│   └── messagequeue.pb.gw.go  # Gateway generated code
+├── api/                   # API documentation
+│   └── swagger/           # OpenAPI/Swagger specs
+│       └── swagger.json
+├── third_party/           # Proto dependencies
+│   └── google/api/        # HTTP annotations
 └── configs/               # Configuration files
 ```
 

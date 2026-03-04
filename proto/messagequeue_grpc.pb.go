@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v6.33.4
-// source: messagequeue.proto
+// source: proto/messagequeue.proto
 
-package protocol
+package proto
 
 import (
 	context "context"
@@ -43,25 +43,40 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MessageQueueClient interface {
+	// Produce a message to a topic
 	Produce(ctx context.Context, in *ProduceRequest, opts ...grpc.CallOption) (*ProduceResponse, error)
+	// ProduceStream handles streaming production (not exposed via REST)
 	ProduceStream(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[ProduceRequest, ProduceResponse], error)
+	// Consume messages from a topic partition
 	Consume(ctx context.Context, in *ConsumeRequest, opts ...grpc.CallOption) (*ConsumeResponse, error)
+	// Subscribe handles streaming consumption (not exposed via REST)
 	Subscribe(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Message], error)
+	// Commit a consumer group offset
 	CommitOffset(ctx context.Context, in *CommitOffsetRequest, opts ...grpc.CallOption) (*CommitOffsetResponse, error)
+	// Seek to a specific offset
 	Seek(ctx context.Context, in *SeekRequest, opts ...grpc.CallOption) (*SeekResponse, error)
+	// Create a new topic
 	CreateTopic(ctx context.Context, in *CreateTopicRequest, opts ...grpc.CallOption) (*CreateTopicResponse, error)
+	// Delete a topic
 	DeleteTopic(ctx context.Context, in *DeleteTopicRequest, opts ...grpc.CallOption) (*DeleteTopicResponse, error)
+	// List all topics
 	ListTopics(ctx context.Context, in *ListTopicsRequest, opts ...grpc.CallOption) (*ListTopicsResponse, error)
+	// Describe a topic
 	DescribeTopic(ctx context.Context, in *DescribeTopicRequest, opts ...grpc.CallOption) (*DescribeTopicResponse, error)
+	// Describe the cluster
 	DescribeCluster(ctx context.Context, in *DescribeClusterRequest, opts ...grpc.CallOption) (*DescribeClusterResponse, error)
+	// Join a consumer group
 	JoinGroup(ctx context.Context, in *JoinGroupRequest, opts ...grpc.CallOption) (*JoinGroupResponse, error)
+	// Sync consumer group assignments
 	SyncGroup(ctx context.Context, in *SyncGroupRequest, opts ...grpc.CallOption) (*SyncGroupResponse, error)
+	// Send heartbeat to consumer group
 	Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*HeartbeatResponse, error)
+	// Leave a consumer group
 	LeaveGroup(ctx context.Context, in *LeaveGroupRequest, opts ...grpc.CallOption) (*LeaveGroupResponse, error)
-	// Raft RPCs
+	// Raft RPCs (internal, not exposed via REST)
 	RequestVote(ctx context.Context, in *RequestVoteRequest, opts ...grpc.CallOption) (*RequestVoteResponse, error)
 	AppendEntries(ctx context.Context, in *AppendEntriesRequest, opts ...grpc.CallOption) (*AppendEntriesResponse, error)
-	// Replication RPC
+	// Replication RPC (internal, not exposed via REST)
 	Fetch(ctx context.Context, in *FetchRequest, opts ...grpc.CallOption) (*FetchResponse, error)
 }
 
@@ -269,25 +284,40 @@ func (c *messageQueueClient) Fetch(ctx context.Context, in *FetchRequest, opts .
 // All implementations must embed UnimplementedMessageQueueServer
 // for forward compatibility.
 type MessageQueueServer interface {
+	// Produce a message to a topic
 	Produce(context.Context, *ProduceRequest) (*ProduceResponse, error)
+	// ProduceStream handles streaming production (not exposed via REST)
 	ProduceStream(grpc.ClientStreamingServer[ProduceRequest, ProduceResponse]) error
+	// Consume messages from a topic partition
 	Consume(context.Context, *ConsumeRequest) (*ConsumeResponse, error)
+	// Subscribe handles streaming consumption (not exposed via REST)
 	Subscribe(*SubscribeRequest, grpc.ServerStreamingServer[Message]) error
+	// Commit a consumer group offset
 	CommitOffset(context.Context, *CommitOffsetRequest) (*CommitOffsetResponse, error)
+	// Seek to a specific offset
 	Seek(context.Context, *SeekRequest) (*SeekResponse, error)
+	// Create a new topic
 	CreateTopic(context.Context, *CreateTopicRequest) (*CreateTopicResponse, error)
+	// Delete a topic
 	DeleteTopic(context.Context, *DeleteTopicRequest) (*DeleteTopicResponse, error)
+	// List all topics
 	ListTopics(context.Context, *ListTopicsRequest) (*ListTopicsResponse, error)
+	// Describe a topic
 	DescribeTopic(context.Context, *DescribeTopicRequest) (*DescribeTopicResponse, error)
+	// Describe the cluster
 	DescribeCluster(context.Context, *DescribeClusterRequest) (*DescribeClusterResponse, error)
+	// Join a consumer group
 	JoinGroup(context.Context, *JoinGroupRequest) (*JoinGroupResponse, error)
+	// Sync consumer group assignments
 	SyncGroup(context.Context, *SyncGroupRequest) (*SyncGroupResponse, error)
+	// Send heartbeat to consumer group
 	Heartbeat(context.Context, *HeartbeatRequest) (*HeartbeatResponse, error)
+	// Leave a consumer group
 	LeaveGroup(context.Context, *LeaveGroupRequest) (*LeaveGroupResponse, error)
-	// Raft RPCs
+	// Raft RPCs (internal, not exposed via REST)
 	RequestVote(context.Context, *RequestVoteRequest) (*RequestVoteResponse, error)
 	AppendEntries(context.Context, *AppendEntriesRequest) (*AppendEntriesResponse, error)
-	// Replication RPC
+	// Replication RPC (internal, not exposed via REST)
 	Fetch(context.Context, *FetchRequest) (*FetchResponse, error)
 	mustEmbedUnimplementedMessageQueueServer()
 }
@@ -764,5 +794,5 @@ var MessageQueue_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "messagequeue.proto",
+	Metadata: "proto/messagequeue.proto",
 }

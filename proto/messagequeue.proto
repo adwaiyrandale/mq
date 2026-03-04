@@ -2,34 +2,121 @@ syntax = "proto3";
 
 package mq;
 
-option go_package = "github.com/adwaiy/mq/pkg/protocol";
+option go_package = "github.com/adwaiy/mq/proto";
+
+import "google/api/annotations.proto";
 
 service MessageQueue {
-  rpc Produce(ProduceRequest) returns (ProduceResponse);
+  // Produce a message to a topic
+  rpc Produce(ProduceRequest) returns (ProduceResponse) {
+    option (google.api.http) = {
+      post: "/v1/topics/{topic}/messages"
+      body: "*"
+    };
+  }
+  
+  // ProduceStream handles streaming production (not exposed via REST)
   rpc ProduceStream(stream ProduceRequest) returns (ProduceResponse);
   
-  rpc Consume(ConsumeRequest) returns (ConsumeResponse);
+  // Consume messages from a topic partition
+  rpc Consume(ConsumeRequest) returns (ConsumeResponse) {
+    option (google.api.http) = {
+      get: "/v1/topics/{topic}/partitions/{partition}/messages"
+    };
+  }
+  
+  // Subscribe handles streaming consumption (not exposed via REST)
   rpc Subscribe(SubscribeRequest) returns (stream Message);
-  rpc CommitOffset(CommitOffsetRequest) returns (CommitOffsetResponse);
-  rpc Seek(SeekRequest) returns (SeekResponse);
   
-  rpc CreateTopic(CreateTopicRequest) returns (CreateTopicResponse);
-  rpc DeleteTopic(DeleteTopicRequest) returns (DeleteTopicResponse);
-  rpc ListTopics(ListTopicsRequest) returns (ListTopicsResponse);
-  rpc DescribeTopic(DescribeTopicRequest) returns (DescribeTopicResponse);
+  // Commit a consumer group offset
+  rpc CommitOffset(CommitOffsetRequest) returns (CommitOffsetResponse) {
+    option (google.api.http) = {
+      post: "/v1/groups/{group_id}/offsets"
+      body: "*"
+    };
+  }
   
-  rpc DescribeCluster(DescribeClusterRequest) returns (DescribeClusterResponse);
+  // Seek to a specific offset
+  rpc Seek(SeekRequest) returns (SeekResponse) {
+    option (google.api.http) = {
+      post: "/v1/topics/{topic}/partitions/{partition}/seek"
+      body: "*"
+    };
+  }
   
-  rpc JoinGroup(JoinGroupRequest) returns (JoinGroupResponse);
-  rpc SyncGroup(SyncGroupRequest) returns (SyncGroupResponse);
-  rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
-  rpc LeaveGroup(LeaveGroupRequest) returns (LeaveGroupResponse);
+  // Create a new topic
+  rpc CreateTopic(CreateTopicRequest) returns (CreateTopicResponse) {
+    option (google.api.http) = {
+      post: "/v1/topics"
+      body: "*"
+    };
+  }
   
-  // Raft RPCs
+  // Delete a topic
+  rpc DeleteTopic(DeleteTopicRequest) returns (DeleteTopicResponse) {
+    option (google.api.http) = {
+      delete: "/v1/topics/{topic}"
+    };
+  }
+  
+  // List all topics
+  rpc ListTopics(ListTopicsRequest) returns (ListTopicsResponse) {
+    option (google.api.http) = {
+      get: "/v1/topics"
+    };
+  }
+  
+  // Describe a topic
+  rpc DescribeTopic(DescribeTopicRequest) returns (DescribeTopicResponse) {
+    option (google.api.http) = {
+      get: "/v1/topics/{topic}"
+    };
+  }
+  
+  // Describe the cluster
+  rpc DescribeCluster(DescribeClusterRequest) returns (DescribeClusterResponse) {
+    option (google.api.http) = {
+      get: "/v1/cluster"
+    };
+  }
+  
+  // Join a consumer group
+  rpc JoinGroup(JoinGroupRequest) returns (JoinGroupResponse) {
+    option (google.api.http) = {
+      post: "/v1/groups/{group_id}/join"
+      body: "*"
+    };
+  }
+  
+  // Sync consumer group assignments
+  rpc SyncGroup(SyncGroupRequest) returns (SyncGroupResponse) {
+    option (google.api.http) = {
+      post: "/v1/groups/{group_id}/sync"
+      body: "*"
+    };
+  }
+  
+  // Send heartbeat to consumer group
+  rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse) {
+    option (google.api.http) = {
+      post: "/v1/groups/{group_id}/heartbeat"
+      body: "*"
+    };
+  }
+  
+  // Leave a consumer group
+  rpc LeaveGroup(LeaveGroupRequest) returns (LeaveGroupResponse) {
+    option (google.api.http) = {
+      post: "/v1/groups/{group_id}/leave"
+      body: "*"
+    };
+  }
+  
+  // Raft RPCs (internal, not exposed via REST)
   rpc RequestVote(RequestVoteRequest) returns (RequestVoteResponse);
   rpc AppendEntries(AppendEntriesRequest) returns (AppendEntriesResponse);
   
-  // Replication RPC
+  // Replication RPC (internal, not exposed via REST)
   rpc Fetch(FetchRequest) returns (FetchResponse);
 }
 

@@ -1,0 +1,272 @@
+syntax = "proto3";
+
+package protoc_gen_openapiv2.options;
+
+option go_package = "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options";
+
+import "google/protobuf/descriptor.proto";
+
+message Swagger {
+  string swagger = 1;
+  Info info = 2;
+  string host = 3;
+  string base_path = 4;
+  enum Scheme {
+    UNKNOWN = 0;
+    HTTP = 1;
+    HTTPS = 2;
+    WS = 3;
+    WSS = 4;
+  }
+  repeated Scheme schemes = 5;
+  repeated string consumes = 6;
+  repeated string produces = 7;
+  map<string, Response> responses = 10;
+  SecurityDefinitions security_definitions = 11;
+  repeated SecurityRequirement security = 12;
+  map<string, Tag> tags = 13;
+  ExternalDocumentation external_docs = 14;
+  bool disable_default_responses = 15;
+}
+
+message Operation {
+  repeated string tags = 1;
+  string summary = 2;
+  string description = 3;
+  ExternalDocumentation external_docs = 4;
+  string operation_id = 5;
+  repeated string consumes = 6;
+  repeated string produces = 7;
+  map<string, Response> responses = 9;
+  repeated string schemes = 10;
+  bool deprecated = 11;
+  repeated SecurityRequirement security = 12;
+}
+
+message Response {
+  string description = 1;
+  Schema schema = 2;
+  map<string, Header> headers = 3;
+  string examples = 4;
+  map<string, string> extensions = 5;
+}
+
+message Info {
+  string title = 1;
+  string description = 2;
+  string terms_of_service = 3;
+  Contact contact = 4;
+  License license = 5;
+  string version = 6;
+  map<string, string> extensions = 7;
+}
+
+message Contact {
+  string name = 1;
+  string url = 2;
+  string email = 3;
+}
+
+message License {
+  string name = 1;
+  string url = 2;
+}
+
+message ExternalDocumentation {
+  string description = 1;
+  string url = 2;
+}
+
+message Schema {
+  string json_schema = 1;
+  string discriminator = 2;
+  bool read_only = 3;
+  string ref = 4;
+  string title = 5;
+  string description = 6;
+  string default = 7;
+  bool multiple_of = 8;
+  double maximum = 9;
+  bool exclusive_maximum = 10;
+  double minimum = 11;
+  bool exclusive_minimum = 12;
+  int64 max_length = 13;
+  int64 min_length = 14;
+  string pattern = 15;
+  int64 max_items = 16;
+  int64 min_items = 17;
+  bool unique_items = 18;
+  int64 max_properties = 19;
+  int64 min_properties = 20;
+  repeated string required = 21;
+  repeated string enum = 22;
+  string type = 23;
+  string format = 24;
+  Schema items = 25;
+  map<string, Schema> properties = 26;
+  Schema additional_properties = 27;
+  string example = 28;
+  bool deprecated = 29;
+}
+
+message Tag {
+  string description = 2;
+  ExternalDocumentation external_docs = 3;
+}
+
+message SecurityDefinitions {
+  map<string, SecurityScheme> security = 1;
+}
+
+message SecurityScheme {
+  enum Type {
+    TYPE_INVALID = 0;
+    TYPE_BASIC = 1;
+    TYPE_API_KEY = 2;
+    TYPE_OAUTH2 = 3;
+  }
+  Type type = 1;
+  string description = 2;
+  string name = 3;
+  enum In {
+    IN_INVALID = 0;
+    IN_QUERY = 1;
+    IN_HEADER = 2;
+  }
+  In in = 4;
+  string flow = 5;
+  string authorization_url = 6;
+  string token_url = 7;
+  Scopes scopes = 8;
+  map<string, string> extensions = 9;
+}
+
+message Scopes {
+  map<string, string> scope = 1;
+}
+
+message SecurityRequirement {
+  message SecurityRequirementValue {
+    repeated string scope = 1;
+  }
+  map<string, SecurityRequirementValue> security_requirement = 1;
+}
+
+message JSONSchema {
+  string ref = 3;
+  string title = 5;
+  string description = 6;
+  string default = 7;
+  bool multiple_of = 8;
+  double maximum = 9;
+  bool exclusive_maximum = 10;
+  double minimum = 11;
+  bool exclusive_minimum = 12;
+  int64 max_length = 13;
+  int64 min_length = 14;
+  string pattern = 15;
+  int64 max_items = 16;
+  int64 min_items = 17;
+  bool unique_items = 18;
+  int64 max_properties = 19;
+  int64 min_properties = 20;
+  repeated string required = 21;
+  repeated string enum = 22;
+  string type = 23;
+  string format = 24;
+  JSONSchema items = 25;
+  map<string, JSONSchema> properties = 26;
+  JSONSchema additional_properties = 27;
+  string example = 28;
+  bool deprecated = 29;
+}
+
+message Header {
+  string description = 1;
+  string type = 2;
+  string format = 3;
+  Schema items = 4;
+  string collection_format = 5;
+  string default = 6;
+  double maximum = 7;
+  bool exclusive_maximum = 8;
+  double minimum = 9;
+  bool exclusive_minimum = 10;
+  int64 max_length = 11;
+  int64 min_length = 12;
+  string pattern = 13;
+  int64 max_items = 14;
+  int64 min_items = 15;
+  bool unique_items = 16;
+  repeated string enum = 17;
+  double multiple_of = 18;
+}
+
+message TagProperty {
+  string description = 1;
+}
+
+message FieldProperties {
+  string description = 1;
+  string default = 2;
+  string example = 3;
+}
+
+message MethodProperties {
+  string summary = 2;
+}
+
+message MessageProperties {
+  string description = 1;
+}
+
+message ServiceProperties {
+  string description = 1;
+}
+
+message EnumProperties {
+  string description = 1;
+}
+
+message EnumValueProperties {
+  string description = 1;
+}
+
+extend google.protobuf.FileOptions {
+  Swagger openapiv2_swagger = 1142;
+}
+
+extend google.protobuf.MethodOptions {
+  Operation openapiv2_operation = 1142;
+}
+
+extend google.protobuf.MessageOptions {
+  Schema openapiv2_schema = 1142;
+  MessageProperties openapiv2_msg = 1143;
+}
+
+extend google.protobuf.ServiceOptions {
+  Tag openapiv2_tag = 1142;
+  ServiceProperties openapiv2_svc = 1143;
+}
+
+extend google.protobuf.FieldOptions {
+  JSONSchema openapiv2_field = 1142;
+  FieldProperties openapiv2_prop = 1143;
+}
+
+extend google.protobuf.OneofOptions {
+  JSONSchema openapiv2_oneof = 1142;
+}
+
+extend google.protobuf.EnumOptions {
+  EnumProperties openapiv2_enum = 1142;
+}
+
+extend google.protobuf.EnumValueOptions {
+  EnumValueProperties openapiv2_enum_value = 1142;
+}
+
+extend google.protobuf.MethodOptions {
+  TagProperty openapiv2_tag_prop = 1143;
+}

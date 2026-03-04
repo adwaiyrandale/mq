@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package google.api;
+
+option go_package = "google.golang.org/genproto/googleapis/api/annotations;annotations";
+
+// Defines the HTTP mapping for the gRPC method.
+//
+// Example:
+//   service Messaging {
+//     rpc GetMessage(GetMessageRequest) returns (Message) {
+//       option (google.api.http) = {
+//         get: "/v1/messages/{message_id}"
+//       };
+//     }
+//   }
+message HttpRule {
+  // Selects a method to which this rule applies.
+  string selector = 1;
+
+  // Determines the URL pattern is matched by this rules.
+  oneof pattern {
+    // Maps to HTTP GET. Used for listing and getting information about
+    // resources.
+    string get = 2;
+
+    // Maps to HTTP PUT. Used for replacing a resource.
+    string put = 3;
+
+    // Maps to HTTP POST. Used for creating a resource or performing an action.
+    string post = 4;
+
+    // Maps to HTTP DELETE. Used for deleting a resource.
+    string delete = 5;
+
+    // Maps to HTTP PATCH. Used for updating a resource.
+    string patch = 6;
+
+    // The custom pattern is used for specifying an HTTP method that is not
+    // included in the `pattern` field.
+    CustomHttpPattern custom = 8;
+  }
+
+  // The name of the request field whose value is mapped to the HTTP request
+  // body, or `*` for mapping all request fields not captured by the path
+  // pattern to the HTTP body.
+  string body = 7;
+
+  // Optional. The name of the response field whose value is mapped to the HTTP
+  // response body.
+  string response_body = 12;
+
+  // Additional HTTP bindings for the selector.
+  repeated HttpRule additional_bindings = 11;
+}
+
+// A custom pattern is used for defining custom HTTP verb.
+message CustomHttpPattern {
+  // The name of this custom HTTP verb.
+  string kind = 1;
+
+  // The path matched by this custom verb.
+  string path = 2;
+}
