@@ -114,6 +114,22 @@ curl "http://localhost:8080/v1/topics/my-topic/partitions/0/messages?offset=0"
 curl http://localhost:8080/v1/topics
 ```
 
+**Quick Test:**
+```bash
+# Run automated test suite
+./scripts/quick-test.sh
+
+# Or with custom URL
+./scripts/quick-test.sh http://localhost:8080
+```
+
+**Detailed Examples:** See [EXAMPLES.md](EXAMPLES.md) for comprehensive use cases including:
+- Creating topics with multiple partitions
+- Producing and consuming messages
+- Working with consumer groups
+- Complete workflow examples (e-commerce, real-time streams)
+- Step-by-step Swagger UI walkthrough
+
 ### Run 3-Node Cluster
 
 Terminal 1:
