@@ -101,7 +101,7 @@ echo "   Joined as member: $MEMBER_ID"
 SYNC_RESP=$(curl -s -X POST "$API_URL/v1/groups/test-group/sync" \
     -H "Content-Type: application/json" \
     -d "{\"group_id\":\"test-group\",\"member_id\":\"$MEMBER_ID\",\"generation_id\":$GEN_ID}")
-echo "   Assignment: $(echo $SYNC_RESP | jq -r '.assignment | keys | join(", ")')'
+echo "   Assignment: $(echo $SYNC_RESP | jq -r '.assignment | keys | join(", ")')"
 
 # Commit offset
 COMMIT_RESP=$(curl -s -X POST "$API_URL/v1/groups/test-group/offsets" \
